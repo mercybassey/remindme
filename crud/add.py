@@ -1,8 +1,15 @@
+import click
 import sqlite3
 
 from database.initialize import initialize_database, DB_FILE
 
-def add_task(task, time, lead):
+@click.command()
+
+@click.option("--task", prompt="Task", help="Add a new task")
+@click.option("--time", prompt="Scheduled Time (HH:MM)", help="Scheduled time for the task")
+@click.option("--lead", default=20, help="Lead time in minutes (default is 20 minutes).")
+
+def add(task, time, lead):
     try:
         initialize_database()
 
@@ -14,3 +21,6 @@ def add_task(task, time, lead):
         print(f"Task '{task}' added successfully")
     except sqlite3.Error as e:
         print(f"Error adding task: {e}")
+
+if __name__ == '__main__':
+    add()
