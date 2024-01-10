@@ -15,6 +15,14 @@ def add(task, time, lead):
 
         with sqlite3.connect(DB_FILE) as db:
             cursor = db.cursor()
+            
+            cursor.execute("SELECT 1 FROM tasks WHERE description = ?", (task,))
+            exists = cursor.fetchone()
+
+            if exists:
+                print(f"Task with description '{task}' already exists. Only tasks with distinct descriptions are allowed")
+                return
+
             cursor.execute('INSERT INTO tasks (description, scheduled_time, lead_time) VALUES (?, ?, ?)', (task, time, lead))
             db.commit()
 
