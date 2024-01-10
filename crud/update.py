@@ -16,15 +16,21 @@ def update(task, new_task, new_lead, new_time):
 
         with sqlite3.connect(DB_FILE) as db:
             cursor = db.cursor()
+            cursor.execute("SELECT 1 FROM tasks WHERE description = ?", (task,))
+            exists = cursor.fetchone()
+
+            if not exists:
+                print(f"Task with description '{task}' does not exist. No updates performed.")
+                return
+            
             update_query = "UPDATE tasks SET"
             update_values = []
 
             if new_task:
                 cursor.execute("SELECT description FROM tasks WHERE description = ?", (task,))
                 existing_description = cursor.fetchone()
-                print(existing_description[0])
                 if existing_description[0] == new_task:
-                    print(f"Nothing to update. Task '{task}' already updated to '{new_task}'")
+                    print(f"Nothing to update. Task with description '{task}' already has the description '{new_task}'")
                 else:
                     update_query += " description = ?,"
                     update_values.append(new_task)
@@ -34,9 +40,8 @@ def update(task, new_task, new_lead, new_time):
             if new_time:
                 cursor.execute("SELECT scheduled_time FROM tasks WHERE description = ?", (task,))
                 existing_sheduled_time = cursor.fetchone()
-                print(existing_sheduled_time[0])
                 if existing_sheduled_time[0] == new_time:
-                    print(f"Nothing to update. Task '{task}' aleady updated to '{new_time}'")
+                    print(f"Nothing to update. Task with description '{task}' aleady has set to time '{new_time}'")
                 else:
                     update_query += " scheduled_time = ?,"
                     update_values.append(new_time)
@@ -47,7 +52,7 @@ def update(task, new_task, new_lead, new_time):
                 existing_lead = cursor.fetchone()
                 new_lead = int(new_lead)
                 if (existing_lead[0]) == new_lead:
-                    print(f"Nothing to update. Task '{task}' aleady updated to {new_lead}")
+                    print(f"Nothing to update. Task with description '{task}' aleady has a lead time {new_lead}")
                 else:
                     update_query += " lead_time = ?,"
                     update_values.append(new_lead)
