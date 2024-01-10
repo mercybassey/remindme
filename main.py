@@ -1,5 +1,5 @@
 import click
-from crud import add, delete, update
+from crud import add, delete, update, read
 
 
 @click.group()
@@ -10,6 +10,7 @@ def main():
 main.add_command(add.add)
 main.add_command(delete.delete)
 main.add_command(update.update)
+main.add_command(read.get)
 
 
 if __name__ == '__main__':
