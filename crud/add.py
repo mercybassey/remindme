@@ -5,9 +5,9 @@ from database.initialize import initialize_database, DB_FILE
 
 @click.command()
 
-@click.option("--task", prompt="Task", help="Add a new task")
-@click.option("--time", prompt="Scheduled Time (HH:MM)", help="Scheduled time for the task")
-@click.option("--lead", default=20, help="Lead time in minutes (default is 20 minutes).")
+@click.option("--task", prompt="Task", help="Add a new task", required=True)
+@click.option("--time", prompt="Scheduled Time (HH:MM)", help="Scheduled time for the task", required=True)
+@click.option("--lead", prompt="Lead Time", help="Lead time in minutes.", required=True)
 
 def add(task, time, lead):
     try:

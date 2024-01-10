@@ -7,9 +7,9 @@ from database.initialize import DB_FILE, initialize_database
 @click.option("--task", help="Update a task")
 @click.option("--new-task", help="New description for the task")
 @click.option("--new-time", help="New scheduled time (HH:MM)")
-@click.option("--new-lead", help="New lead time in minutes (default is 20 minutes).")
+@click.option("--new-lead", help="New lead time in minutes")
 
-def update(task, new_task, new_time, new_lead):
+def update(task, new_task, new_lead, new_time):
     """Update a task"""
     try:
         initialize_database()
@@ -20,21 +20,41 @@ def update(task, new_task, new_time, new_lead):
             update_values = []
 
             if new_task:
-                update_query += " description = ?,"
-                update_values.append(new_task)
-                print(f"Task '{task}' updated successfully to '{new_task}")
+                cursor.execute("SELECT description FROM tasks WHERE description = ?", (task,))
+                existing_description = cursor.fetchone()
+                print(existing_description[0])
+                if existing_description[0] == new_task:
+                    print(f"Nothing to update. Task '{task}' already updated to '{new_task}'")
+                else:
+                    update_query += " description = ?,"
+                    update_values.append(new_task)
+                    print(f"Task '{task}' updated successfully to '{new_task}'")
+
 
             if new_time:
-                update_query += " scheduled_time = ?,"
-                update_values.append(new_time)
-                print(f"Time for task: '{task}' updated successfully to '{new_time}'")
-
+                cursor.execute("SELECT scheduled_time FROM tasks WHERE description = ?", (task,))
+                existing_sheduled_time = cursor.fetchone()
+                print(existing_sheduled_time[0])
+                if existing_sheduled_time[0] == new_time:
+                    print(f"Nothing to update. Task '{task}' aleady updated to '{new_time}'")
+                else:
+                    update_query += " scheduled_time = ?,"
+                    update_values.append(new_time)
+                    print(f"Time for task: '{task}' updated successfully to '{new_time}'")
+                    
             if new_lead:
-                update_query += " lead_time = ?,"
-                update_values.append(new_lead)
-                print(f"Lead for task: '{task}' updated successfully to {new_lead} minutes")
+                cursor.execute("SELECT lead_time FROM tasks WHERE description = ?", (task,))
+                existing_lead = cursor.fetchone()
+                new_lead = int(new_lead)
+                if (existing_lead[0]) == new_lead:
+                    print(f"Nothing to update. Task '{task}' aleady updated to {new_lead}")
+                else:
+                    update_query += " lead_time = ?,"
+                    update_values.append(new_lead)
+                    print(f"Lead time for task: '{task}' updated successfully to {new_lead}")
+                    
 
-            if not any(new_task or new_time or new_lead):
+            if not any([new_task or new_time or new_lead]):
                 print("No valid update option provided.")
                 return
 
@@ -50,6 +70,10 @@ def update(task, new_task, new_time, new_lead):
 
 if __name__ == '__main__':
     update()
+
+
+
+
 
 
 
