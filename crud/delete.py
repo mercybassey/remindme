@@ -14,16 +14,16 @@ def delete(task):
             exists = cursor.fetchone()
 
             if not exists:
-                print(f"Nothing to delete. Task with description '{task}' does not exist.")
+                print(f"\033[38;5;208m• Nothing to delete. Task with description '{task}' does not exist.")
                 return
 
             cursor.execute('DELETE FROM tasks WHERE description = ?', (task,))
             db.commit()
 
-        print(f"Task '{task}' deleted successfully")
+        print(f"\033[92m✔ Task '{task}' deleted successfully")
 
     except sqlite3.Error as e:
-        print(f"Error deleting task: {e}")
+        print(f"\033[91m✘ Error deleting task: {e}")
 
 if __name__ == '__main__':
     delete()

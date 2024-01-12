@@ -1,6 +1,8 @@
 import click
 import sqlite3
 
+from datetime import datetime
+
 from database.initialize import initialize_database, DB_FILE
 
 @click.command()
@@ -13,6 +15,12 @@ def add(task, time, lead):
     try:
         initialize_database()
 
+        try:
+            datetime.strptime(time, "%H:%M")
+        except ValueError:
+            print("\033[91m✘ Invalid time format. Please use a valid time of 24hours\033[0m")
+            return
+
         with sqlite3.connect(DB_FILE) as db:
             cursor = db.cursor()
             
@@ -20,15 +28,15 @@ def add(task, time, lead):
             exists = cursor.fetchone()
 
             if exists:
-                print(f"Task with description '{task}' already exists. Only tasks with distinct descriptions are allowed")
+                print(f"\033[91m✘ Task with description '{task}' already exists. Only tasks with distinct descriptions are allowed")
                 return
 
             cursor.execute('INSERT INTO tasks (description, scheduled_time, lead_time) VALUES (?, ?, ?)', (task, time, lead))
             db.commit()
 
-        print(f"Task '{task}' added successfully")
+        print(f"\033[92m✔ Task '{task}' added successfully")
     except sqlite3.Error as e:
-        print(f"Error adding task: {e}")
+        print(f"\033[91m✘ Error adding task: {e}")
 
 if __name__ == '__main__':
     add()

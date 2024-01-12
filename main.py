@@ -1,5 +1,6 @@
 import click
-from crud import add, delete, update, read
+from crud import add, delete, read
+from crud.update import update
 
 
 @click.group()

@@ -17,13 +17,13 @@ def get(all):
             tasks = cursor.fetchall()
 
             if not tasks:
-                print("No tasks found.")
+                print(f"\033[38;5;208m• No tasks found.")
             else:
                 headers = ["ID", "Description", "Scheduled Time", "Lead Time"]
                 print(tabulate(tasks, headers=headers, tablefmt="pretty"))
 
     except sqlite3.Error as e:
-        print(f"Error reading tasks: {e}")
+        print(f"\033[91m✘ Error reading tasks: {e}")
 
 if __name__ == '__main__':
     get()
