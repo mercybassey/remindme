@@ -8,6 +8,8 @@ from .columns.new_task import apply_new_task
 from .columns.new_time import apply_new_time
 from .columns.new_lead import apply_new_lead
 
+from ..utils.task_lower import lowercase
+
 
 @click.command()
 @click.option("--task", help="Update a task")
@@ -23,9 +25,10 @@ def update(task, new_task, new_lead, new_time):
         with sqlite3.connect(DB_FILE) as db:
             cursor = db.cursor()
 
-            task = task.lower()
+            task = lowercase(task)
+            print(task)
             
-            cursor.execute("SELECT 1 FROM tasks WHERE description = ?", (task,))
+            cursor.execute("SELECT 1 FROM tasks WHERE description = ?", (task ,))
             exists = cursor.fetchone()
 
             if not exists:
@@ -35,14 +38,14 @@ def update(task, new_task, new_lead, new_time):
             update_query = "UPDATE tasks SET"
             update_values = []
 
-            update_query, update_values = apply_new_task(cursor, task, new_task, update_query, update_values)
-            update_query, update_values = apply_new_time(cursor, task, new_time, update_query, update_values)
-            update_query, update_values = apply_new_lead(cursor, task, new_lead, new_time, update_query, update_values)
+            update_query, update_values = apply_new_task(cursor, task , new_task, update_query, update_values)
+            update_query, update_values = apply_new_time(cursor, task , new_time, update_query, update_values)
+            update_query, update_values = apply_new_lead(cursor, task , new_lead, new_time, update_query, update_values)
 
             if update_values:
                 update_query = update_query.rstrip(',')
                 update_query += " WHERE description = ?"
-                update_values.append(task)
+                update_values.append(task )
 
                 cursor.execute(update_query, tuple(update_values))
                 db.commit()

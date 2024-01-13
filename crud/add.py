@@ -5,6 +5,8 @@ from datetime import datetime
 from database.initialize import initialize_database, DB_FILE
 from .utils.lead_time_validation import is_valid_lead_time
 
+from .utils.task_lower import lowercase
+
 @click.command()
 @click.option("--task", prompt="Task", help="Add a new task", required=True)
 @click.option("--time", prompt="Scheduled Time (HH:MM)", help="Scheduled time for the task", required=True)
@@ -21,7 +23,7 @@ def add(task, time, lead):
 
         current_time = datetime.now().strftime("%H:%M")
 
-        task = task.lower()
+        task = lowercase(task)
 
         if not is_valid_lead_time(datetime.strptime(current_time, "%H:%M"), datetime.strptime(time, "%H:%M"), int(lead)):
             print("\033[91m✘ Invalid lead time. Lead time must be a positive duration from the current time to the scheduled time\033[0m")

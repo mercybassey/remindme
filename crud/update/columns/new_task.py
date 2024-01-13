@@ -1,7 +1,11 @@
 from ..utils.get_existing_value import get_existing_value
 from ..utils.print_update_message import print_update_message
 
+from ...utils.task_lower import lowercase
+
 def apply_new_task(cursor, task, new_task, update_query, update_values):
+    new_task = lowercase(new_task)
+
     if new_task:
         cursor.execute("SELECT 1 FROM tasks WHERE description = ?", (new_task,))
         exists = cursor.fetchone()

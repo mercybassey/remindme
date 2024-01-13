@@ -2,6 +2,8 @@ import click
 import sqlite3
 from database.initialize import initialize_database, DB_FILE
 
+from .utils.task_lower import lowercase
+
 @click.command()
 @click.option("--task", prompt="Task to delete", help="Delete a task")
 def delete(task):
@@ -10,6 +12,9 @@ def delete(task):
 
         with sqlite3.connect(DB_FILE) as db:
             cursor = db.cursor()
+
+            task = lowercase(task)
+            
             cursor.execute("SELECT 1 FROM tasks WHERE description = ?", (task,))
             exists = cursor.fetchone()
 
