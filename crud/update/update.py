@@ -22,6 +22,8 @@ def update(task, new_task, new_lead, new_time):
 
         with sqlite3.connect(DB_FILE) as db:
             cursor = db.cursor()
+
+            task = task.lower()
             
             cursor.execute("SELECT 1 FROM tasks WHERE description = ?", (task,))
             exists = cursor.fetchone()
