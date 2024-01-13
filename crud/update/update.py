@@ -3,11 +3,11 @@ import click
 
 from database.initialize import DB_FILE, initialize_database
 
-from .validate_time import validate_time_format
 
-from .new_task import apply_new_task
-from .new_time import apply_new_time
-from .new_lead import apply_new_lead
+from .columns.new_task import apply_new_task
+from .columns.new_time import apply_new_time
+from .columns.new_lead import apply_new_lead
+
 
 @click.command()
 @click.option("--task", help="Update a task")
@@ -28,18 +28,14 @@ def update(task, new_task, new_lead, new_time):
 
             if not exists:
                 print(f"\033[38;5;208m• Task with description '{task}' does not exist. No updates performed.")
-                return
-            
-            if new_time and not validate_time_format(new_time):
-                print("\033[91m✘ Invalid time format. Please use a valid time of 24 hours\033[0m")
-                return
+                return            
             
             update_query = "UPDATE tasks SET"
             update_values = []
 
             update_query, update_values = apply_new_task(cursor, task, new_task, update_query, update_values)
             update_query, update_values = apply_new_time(cursor, task, new_time, update_query, update_values)
-            update_query, update_values = apply_new_lead(cursor, task, new_lead, update_query, update_values)
+            update_query, update_values = apply_new_lead(cursor, task, new_lead, new_time, update_query, update_values)
 
             if update_values:
                 update_query = update_query.rstrip(',')
