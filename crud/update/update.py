@@ -35,7 +35,13 @@ def update(task, new_task, new_lead, new_time):
 
             if not exists:
                 print(f"\033[38;5;208m• Task with description '{task}' does not exist. No updates performed.")
-                return            
+                return 
+
+            try:
+                lead = int(new_lead)
+            except ValueError:
+                print("\033[91m✘ Lead time must be an integer\033[0m")
+                return           
             
             update_query = "UPDATE tasks SET"
             update_values = []
