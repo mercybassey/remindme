@@ -4,8 +4,10 @@ from datetime import datetime
 
 from database.initialize import initialize_database, DB_FILE
 from .utils.lead_time_validation import is_valid_lead_time
+from .utils.validate_time import check_time_format
 
 from .utils.task_lower import lowercase
+
 
 @click.command()
 @click.option("--task", prompt="Task", help="Add a new task", required=True)
@@ -15,11 +17,9 @@ def add(task, time, lead):
     try:
         initialize_database()
 
-        try:
-            datetime.strptime(time, "%H:%M")
-        except ValueError:
-            print("\033[91m✘ Invalid time format. Please use a valid time of 24 hours\033[0m")
+        if not check_time_format(time):
             return
+        
 
         current_time = datetime.now().strftime("%H:%M")
 

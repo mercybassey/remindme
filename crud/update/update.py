@@ -1,6 +1,7 @@
 import sqlite3
 import click
 
+
 from database.initialize import DB_FILE, initialize_database
 
 
@@ -9,6 +10,8 @@ from .columns.new_time import apply_new_time
 from .columns.new_lead import apply_new_lead
 
 from ..utils.task_lower import lowercase
+
+
 
 
 @click.command()
@@ -26,8 +29,7 @@ def update(task, new_task, new_lead, new_time):
             cursor = db.cursor()
 
             task = lowercase(task)
-            print(task)
-            
+                
             cursor.execute("SELECT 1 FROM tasks WHERE description = ?", (task ,))
             exists = cursor.fetchone()
 
@@ -37,7 +39,7 @@ def update(task, new_task, new_lead, new_time):
             
             update_query = "UPDATE tasks SET"
             update_values = []
-
+            
             update_query, update_values = apply_new_task(cursor, task , new_task, update_query, update_values)
             update_query, update_values = apply_new_time(cursor, task , new_time, update_query, update_values)
             update_query, update_values = apply_new_lead(cursor, task , new_lead, new_time, update_query, update_values)
@@ -45,7 +47,7 @@ def update(task, new_task, new_lead, new_time):
             if update_values:
                 update_query = update_query.rstrip(',')
                 update_query += " WHERE description = ?"
-                update_values.append(task )
+                update_values.append(task)
 
                 cursor.execute(update_query, tuple(update_values))
                 db.commit()

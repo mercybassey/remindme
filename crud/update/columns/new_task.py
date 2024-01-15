@@ -4,21 +4,22 @@ from ..utils.print_update_message import print_update_message
 from ...utils.task_lower import lowercase
 
 def apply_new_task(cursor, task, new_task, update_query, update_values):
-    new_task = lowercase(new_task)
+    if new_task is not None:
+        new_task = lowercase(new_task)
+        
+        if new_task:
+            cursor.execute("SELECT 1 FROM tasks WHERE description = ?", (new_task,))
+            exists = cursor.fetchone()
 
-    if new_task:
-        cursor.execute("SELECT 1 FROM tasks WHERE description = ?", (new_task,))
-        exists = cursor.fetchone()
+            if exists is not None:
+                print(f"\033[38;5;208m• Task with description '{new_task}' already exists. No updates performed.")
+                return update_query, update_values
 
-        if exists is not None:
-            print(f"\033[38;5;208m• Task with description '{new_task}' already exists. No updates performed.")
-            return update_query, update_values
-
-        existing_description = get_existing_value(cursor, "description", task)
-        if existing_description == new_task:
-            print(f"\033[38;5;208m• Nothing to update. Task with description '{task}' already has the description '{new_task}'")
-        else:
-            update_query += " description = ?,"
-            update_values.append(new_task)
-            print_update_message("Description", task, new_task)
+            existing_description = get_existing_value(cursor, "description", task)
+            if existing_description == new_task:
+                print(f"\033[38;5;208m• Nothing to update. Task with description '{task}' already has the description '{new_task}'")
+            else:
+                update_query += " description = ?,"
+                update_values.append(new_task)
+                print_update_message("Description", task, new_task)
     return update_query, update_values
