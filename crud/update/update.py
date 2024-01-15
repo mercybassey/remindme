@@ -7,7 +7,7 @@ from database.initialize import DB_FILE, initialize_database
 
 from .columns.new_task import apply_new_task
 from .columns.new_time import apply_new_time
-from .columns.new_lead import apply_new_lead
+from .columns.new_lead import validate_and_apply_lead
 
 from ..utils.task_lower import lowercase
 
@@ -35,20 +35,15 @@ def update(task, new_task, new_lead, new_time):
 
             if not exists:
                 print(f"\033[38;5;208m• Task with description '{task}' does not exist. No updates performed.")
-                return 
-
-            try:
-                lead = int(new_lead)
-            except ValueError:
-                print("\033[91m✘ Lead time must be an integer\033[0m")
-                return           
+                return  
+          
             
             update_query = "UPDATE tasks SET"
             update_values = []
             
             update_query, update_values = apply_new_task(cursor, task , new_task, update_query, update_values)
             update_query, update_values = apply_new_time(cursor, task , new_time, update_query, update_values)
-            update_query, update_values = apply_new_lead(cursor, task , new_lead, new_time, update_query, update_values)
+            update_query, update_values = validate_and_apply_lead(cursor, task , new_lead, new_time, update_query, update_values)
 
             if update_values:
                 update_query = update_query.rstrip(',')

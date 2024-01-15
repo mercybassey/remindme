@@ -10,9 +10,14 @@ def convert_time_str_to_datetime(time_str):
     else:
         return None
 
-def apply_new_lead(cursor, task, new_lead, new_time, update_query, update_values):
-    
+def validate_and_apply_lead(cursor, task, new_lead, new_time, update_query, update_values):
     if new_lead:
+        try:
+            new_lead = int(new_lead)
+        except ValueError:
+            print("\033[91m✘ Lead time must be an integer\033[0m")
+            return update_query, update_values
+
         existing_lead = int(get_existing_value(cursor, "lead_time", task))
         new_lead = int(new_lead)
 
