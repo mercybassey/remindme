@@ -25,6 +25,12 @@ def add(task, time, lead):
 
         task = lowercase(task)
 
+        try:
+            lead = int(lead)
+        except ValueError:
+            print("\033[91m✘ Lead time must be an integer\033[0m")
+            return
+
         if not is_valid_lead_time(datetime.strptime(current_time, "%H:%M"), datetime.strptime(time, "%H:%M"), int(lead)):
             print("\033[91m✘ Invalid lead time. Lead time must be a positive duration from the current time to the scheduled time\033[0m")
             return
